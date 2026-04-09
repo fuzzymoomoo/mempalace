@@ -28,7 +28,7 @@ def _seed(palace_path, drawers):
     Create a ChromaDB collection seeded with *drawers*.
 
     Each drawer dict needs: id, wing, room. Optional: hall, document.
-    Returns (client, collection) — caller must call client.close().
+    Returns (client, collection) — caller must stop the client before cleanup.
     """
     client = chromadb.PersistentClient(path=palace_path)
     col = client.get_or_create_collection("mempalace_drawers")
@@ -51,6 +51,18 @@ def _seed(palace_path, drawers):
     return client, col
 
 
+def _close_client(client):
+    close = getattr(client, "close", None)
+    if callable(close):
+        close()
+        return
+
+    system = getattr(client, "_system", None)
+    stop = getattr(system, "stop", None)
+    if callable(stop):
+        stop()
+
+
 # ── fixtures ──────────────────────────────────────────────────────────────────
 
 
@@ -60,7 +72,7 @@ def empty_col(palace_path):
     client = chromadb.PersistentClient(path=palace_path)
     col = client.get_or_create_collection("mempalace_drawers")
     yield col
-    client.close()
+    _close_client(client)
 
 
 @pytest.fixture
@@ -82,7 +94,7 @@ def single_wing_col(palace_path):
         ],
     )
     yield col
-    client.close()
+    _close_client(client)
 
 
 @pytest.fixture
@@ -105,7 +117,7 @@ def tunnel_col(palace_path):
         ],
     )
     yield col
-    client.close()
+    _close_client(client)
 
 
 # ── build_graph ───────────────────────────────────────────────────────────────
@@ -160,7 +172,7 @@ class TestBuildGraph:
         try:
             nodes, _ = build_graph(col=col)
         finally:
-            client.close()
+            _close_client(client)
         assert "general" not in nodes
         assert "backend" in nodes
 
@@ -177,7 +189,7 @@ class TestBuildGraph:
         try:
             nodes, _ = build_graph(col=col)
         finally:
-            client.close()
+            _close_client(client)
         assert nodes["backend"]["dates"] == []
 
 
