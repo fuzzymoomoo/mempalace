@@ -164,7 +164,7 @@ class TestBuildGraph:
         assert "general" not in nodes
         assert "backend" in nodes
 
-    def test_node_dates_capped_at_five(self, palace_path):
+    def test_dates_empty_when_date_field_absent(self, palace_path):
         client, col = _seed(
             palace_path,
             [
@@ -256,7 +256,7 @@ class TestFindTunnels:
         entry = tunnels[0]
         assert "room" in entry
         assert "wings" in entry
-        assert "halls" in entry
+        assert "recent" in entry
         assert "count" in entry
 
     def test_filter_by_wing_a(self, tunnel_col):
