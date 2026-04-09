@@ -41,7 +41,7 @@ READABLE_EXTENSIONS = {
     ".csv",
     ".sql",
     ".toml",
-    ".al",   # Microsoft Dynamics 365 / AL Language
+    ".al",  # Microsoft Dynamics 365 / AL Language
     ".xlf",  # XLIFF localisation files
     ".ps1",  # PowerShell scripts
 }
