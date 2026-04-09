@@ -331,7 +331,7 @@ class TestExtractMemories:
 
     def test_milestone_text_classified_as_milestone(self):
         memories = extract_memories(self.MILESTONE)
-        assert any(m["memory_type"] in ("milestone", "decision") for m in memories)
+        assert any(m["memory_type"] == "milestone" for m in memories)
 
     def test_problem_text_classified_as_problem(self):
         memories = extract_memories(self.PROBLEM)
@@ -350,9 +350,10 @@ class TestExtractMemories:
         )
         memories = extract_memories(text)
         assert len(memories) >= 1
-        # resolved problem → milestone (or stays problem if milestone outscores)
-        types = {m["memory_type"] for m in memories}
-        assert types & {"milestone", "problem"}
+        # _disambiguate flips resolved problem → milestone
+        assert any(m["memory_type"] == "milestone" for m in memories), (
+            f"Expected resolved problem to become milestone, got: {[m['memory_type'] for m in memories]}"
+        )
 
     def test_short_paragraphs_filtered_out(self):
         text = "Too short.\n\n" + self.DECISION
