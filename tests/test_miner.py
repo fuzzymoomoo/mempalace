@@ -10,6 +10,18 @@ from mempalace.miner import mine, scan_project
 from mempalace.palace import file_already_mined
 
 
+def _close_client(client):
+    close = getattr(client, "close", None)
+    if callable(close):
+        close()
+        return
+
+    system = getattr(client, "_system", None)
+    stop = getattr(system, "stop", None)
+    if callable(stop):
+        stop()
+
+
 def write_file(path: Path, content: str):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(content, encoding="utf-8")
