@@ -225,7 +225,7 @@ def cmd_repair(args):
     print(f"  Extracted {len(all_ids)} drawers")
 
     # Backup and rebuild
-    palace_path = palace_path.rstrip(os.sep)
+    palace_path = os.path.normpath(palace_path)
     backup_path = palace_path + ".backup"
     if os.path.exists(backup_path):
         if not contains_palace_database(backup_path):

@@ -71,7 +71,7 @@ def sanitize_query(raw_query: str) -> dict:
     def _strip_wrapping_quotes(candidate: str) -> str:
         candidate = candidate.strip()
         while (
-            len(candidate) >= 2 and candidate[:1] in QUOTE_CHARS and candidate[-1:] in QUOTE_CHARS
+            len(candidate) >= 2 and candidate[:1] in QUOTE_CHARS and candidate[:1] == candidate[-1:]
         ):
             candidate = candidate[1:-1].strip()
             if not candidate:
@@ -158,6 +158,8 @@ def sanitize_query(raw_query: str) -> dict:
         seg = seg.strip()
         if len(seg) >= MIN_QUERY_LENGTH:
             candidate = _trim_candidate(seg)
+            if len(candidate) < MIN_QUERY_LENGTH:
+                continue
             logger.warning(
                 "Query sanitized: %d → %d chars (method=tail_sentence)",
                 original_length,

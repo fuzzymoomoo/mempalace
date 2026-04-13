@@ -117,7 +117,7 @@ def confirm_destructive_action(
         return True
 
     print(f"\n  {operation_name} will replace data in: {palace_path}")
-    print("  A backup will be created first, but the original directory will be deleted.")
+    print("  A backup will be created first, then the palace will be rebuilt.")
     try:
         answer = input("  Continue? [y/N]: ").strip().lower()
     except EOFError:
